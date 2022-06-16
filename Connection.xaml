@@ -1,0 +1,23 @@
+﻿<Window x:Class="asu.Connection"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:asu"
+        mc:Ignorable="d"
+        Title="Настройки подключения к базе данных" Height="311" Width="614" HorizontalAlignment="Center" VerticalAlignment="Center" Icon="/pc.ico" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="0,0,0,18">
+        <Label Content="Настройки подключения к базе данных" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Height="33" Width="312" FontSize="14" FontWeight="Bold"/>
+        <Label Content="Адрес хоста" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" Height="30" FontSize="14"/>
+        <TextBox x:Name ="host" Height="30" Margin="151,48,10,0" TextWrapping="Wrap" Text="127.0.0.1" VerticalAlignment="Top"/>
+        <Label Content="Порт" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Height="31" FontSize="14"/>
+        <TextBox x:Name ="port" Height="31" Margin="151,84,10,0" TextWrapping="Wrap" Text="5432" VerticalAlignment="Top"/>
+        <Label Content="Логин" HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" Height="31" FontSize="14"/>
+        <TextBox x:Name ="login" Height="31" Margin="151,120,10,0" TextWrapping="Wrap" Text="admin" VerticalAlignment="Top"/>
+        <Label Content="Пароль" HorizontalAlignment="Left" Margin="10,158,0,0" VerticalAlignment="Top" Height="30" FontSize="14"/>
+        <PasswordBox x:Name ="pass" Height="30" Margin="151,158,10,0"  VerticalAlignment="Top"/>
+        <Label Content="База данных" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top" Height="34" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <TextBox x:Name ="db" Height="30" Margin="151,194,10,0" TextWrapping="Wrap" Text="SellsDB" VerticalAlignment="Top"/>
+        <Button Content="Подключиться" HorizontalAlignment="Center" Margin="0,229,0,0" Width="118" FontWeight="Bold" Click="Button_Click" Height="24" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

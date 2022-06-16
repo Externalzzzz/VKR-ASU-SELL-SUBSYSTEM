@@ -1,0 +1,31 @@
+﻿<Window x:Class="asu.Result"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:asu"
+        mc:Ignorable="d"
+        Title="Результат решения задачи по формированию списка категорий товаров" Height="614" Width="748" Icon="/pc.ico">
+    <Window.Resources>
+        <XmlDataProvider x:Key="ResultProvider" Source="result.xml"/>
+    </Window.Resources>
+    <Grid  VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+
+            <RowDefinition />
+            <RowDefinition Height="47"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+
+        </Grid.ColumnDefinitions>
+        <DocumentViewer x:Name="docViewer" Grid.Row="0" Grid.ColumnSpan="2" Margin="15,10,10,0"  VerticalAlignment="Top" />
+        <!--<DocumentViewer Grid.Row="0" HorizontalAlignment="Left" Margin="10,42,0,0"
+                       Grid.ColumnSpan="2" 
+                    Name="documentViewer1" Width="728" Grid.RowSpan="2" />-->
+        <Button Content="Сохранить в БД" Grid.Column="0" Grid.Row="1" Margin="94,12,94,13" Click="Button_Click"/>
+        <Button Content="Сохранить файл локально" Grid.Column="1" Grid.Row="1" Margin="95,13,95,14" Click="Button_Click_1"/>
+
+    </Grid>
+</Window>

@@ -1,0 +1,30 @@
+﻿<Window x:Class="asu.Help"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:asu"
+        mc:Ignorable="d"
+        Title="Справка" Height="663" Width="1140" Icon="/pc.ico">
+    <Grid>
+        <TextBlock Margin="10,10,10,0" TextWrapping="Wrap" Text="Данная программа является частью автоматизированной системы управления подсистемой сбыта готовой продукции" VerticalAlignment="Top" Height="88" FontSize="18" FontWeight="Bold"/>
+        <TextBlock Margin="10,98,583,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top" Height="168" TextTrimming="WordEllipsis">
+        Для решения требуемой задачи:<LineBreak/> <TabItem/>1) Выберите требуемую задачу из вкладок в главном меню;
+        <LineBreak/><TabItem/>2) Заполните входные данные для решения задачи;
+        <LineBreak/><TabItem/>3) Нажмите кнопку "Провести анализ";
+        <LineBreak/><TabItem/>4) Ознакомьтесь с результатами решения;
+        <LineBreak/><TabItem/>5) Выберите необходимые действия "Сохранить в базе данных", "Сохранить в формате .docx" и закройте окно с результатами;
+        </TextBlock>
+        <TextBlock Margin="0,98,10,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top" Height="168" HorizontalAlignment="Right" Width="564">
+        Для внесения корректировок в справочнике категорий товаров:
+        <LineBreak/><TabItem/>1) Выберите вкладку "Справочник"->"Редактирование справочника" в главном окне программы;
+        <LineBreak/><TabItem/>2) Ознакомьтесь с данными справочника;
+        <LineBreak/><TabItem/>3) Внесите необходимые изменения, дважды нажав на ячейку;
+        <LineBreak/><TabItem/>4) Нажмите "Сохранить" для сохранения изменений данных справочника;
+        </TextBlock>
+        <Image Margin="10,300,583,80" Source="/example.png"/>
+        <TextBlock Margin="10,271,570,0" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Top" Height="24"><Run Text="Пример введенных данных:"/></TextBlock>
+        <Image Margin="0,284,38,63" Source="/ex2.png" HorizontalAlignment="Right" Width="536"/>
+        <TextBlock Margin="10,590,306,0" TextWrapping="Wrap" FontSize="16" FontWeight="Bold" VerticalAlignment="Top" Height="24"><Run Text="При проблемах с подключением к базе данных обратитесь к системному администратору!"/></TextBlock>
+    </Grid>
+</Window>
