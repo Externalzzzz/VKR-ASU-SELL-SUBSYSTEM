@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using Npgsql;
 using System.Data;
+using System.Linq;
 
 namespace asu
 {
@@ -29,24 +30,7 @@ namespace asu
     /// 
     public partial class Catalog : Window
     {
-        static string[] headers = new string[] 
-        { "Код", "Название", "Размер", "Класс прочности", 
-        "Марка морозостойкости", "Единица измерения", "Стоимость(руб.)" };
-        static string[,] data = new string[,]
-            {
-                {"100",     "Блоки D600",   "625х250x200",    "В5",      "F100", "Шт.", "5600"},
-                {"101",     "Блоки D300",   "300х250х625",    "В1,5",    "F100", "Шт.", "3300"},
-                {"102",     "Блоки D100",   "600x250x200",    "B0,5",    "F35",  "Шт.", "1000"},
-                {"103",     "Блоки D200",   "600x100x250",    "В0,5",    "F35",  "Шт.", "2300"},
-                {"104",     "Блоки D200",   "600x200x250",    "В0,5",    "F35",  "Шт.", "2700"},
-                {"105",     "Блоки D400",   "600x400x250",    "В2",      "F100", "Шт.", "6000"},
-                {"106",     "Блоки D300",   "300х250х625",    "В1,5",    "F100", "Шт.", "2300"},
-                {"107",     "Блоки D300",   "300х250х625",    "В1,5",    "F100", "Шт.", "3300"},
-                {"108",     "Блоки D100",   "600x250x200",    "B0,5",    "F35",  "Шт.", "1000"},
-                {"109",     "Блоки D200",   "600x100x250",    "В0,5",    "F35",  "Шт.", "2300"},
-                {"110",     "Блоки D200",   "600x200x250",    "В0,5",    "F35",  "Шт.", "2700"},
-                {"111",     "Блоки D300",   "300х250х625",    "В1,5",    "F100", "Шт.", "2300"},
-            };
+        
 
         //private BindingList<Item> items;
         private Dictionary<string, string> attributes = new Dictionary<string, string>
@@ -84,18 +68,14 @@ namespace asu
                                         WHERE
                                             table_name = 'products'
                                         ORDER BY ordinal_position ASC;";
+        DataTable DTDB = null;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //items = new BindingList<Item>();
-            //for (int i = 0; i < data.GetLength(0); i++)
-            //    items.Add(new Item() { ItemCode = data[i, 0], ItemName = data[i, 1], Size = data[i, 2], ItemClass1 = data[i, 3], ItemClass2 = data[i, 4], Edinica = data[i, 5], Price = data[i, 6] });
-            //GRIDTable.ItemsSource = items;
             List<List<string>> collection = SendQuery(query);
 
             List<List<string>> columnsCollection = SendQuery(queryColumns);
             DataTable dt = new DataTable();
             for (int i = 0; i < collection[0].Count; i++)
-            //dt.Columns.Add(new DataColumn(columnsCollection[i][0], columnsCollection[i][1] == "integer"?typeof(int):typeof(string)));
             {
                 dt.Columns.Add(new DataColumn(attributes[columnsCollection[i][0]], typeof(string)));
                 
@@ -106,14 +86,11 @@ namespace asu
                 DataRow dr = dt.NewRow();
                 for (int j = 0; j < collection[i].Count; j++)
                 {
-                    //if (dt.Columns[j].DataType == typeof(string))
-                    //    dr[j] = collection[i][j];
-                    //else 
-                    //    dr[j] = int.Parse(collection[i][j]);
                     dr[j] = collection[i][j];
                 }
                 dt.Rows.Add(dr);
             }
+            DTDB = dt;
             GRIDTable.ItemsSource = new DataView(dt);
 
         }
@@ -157,8 +134,69 @@ namespace asu
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             return res;
         }
+        private void sendQuery()
+        {
+            NpgsqlConnection conn = new NpgsqlConnection(Connecting.DefaultConnetion);
+            string queryTrunc = "TRUNCATE dbschema.products;";
+            NpgsqlCommand comm = new NpgsqlCommand(queryTrunc, conn);
+            conn.Open();
+            comm.ExecuteReader();
+            conn.Wait();
+            conn.Close();
+        }
+            
+        private void sendQuery(string query)
+        {
+            NpgsqlConnection conn = new NpgsqlConnection(Connecting.DefaultConnetion);
+            NpgsqlCommand comm = new NpgsqlCommand(query, conn);
+            List<List<string>> res = new List<List<string>>();
+            try
+            {
+                conn.Open();
+                var reader = comm.ExecuteReader();
+                while (reader.Read())
+                {
+                    int i = 0;
+                    try
+                    {
+                        List<string> temp = new List<string>();
+                        for (int j = 0; j < reader.FieldCount; j++)
+                        {
+                            temp.Add(reader[j].ToString());
+
+                        }
+                        res.Add(temp);
+                        i++;
+                    }
+                    catch { }
+
+                }
+                Debug.WriteLine("SQL query res:");
+                foreach (var item in res)
+                {
+                    foreach (var item2 in item)
+                        Debug.Write($"{item2}\t");
+                    Debug.Write("\n");
+                }
+                conn.Close();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            return;
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            DataTable dt = ((DataView)GRIDTable.ItemsSource).ToTable();
+            //sendQuery();
+            MainWindow.DebugData(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                string queryAdd = $@"UPDATE
+                                dbschema.products set product_id = {int.Parse(dt.Rows[i][0].ToString())}, product_name = '{dt.Rows[i][1]}', product_size = '{dt.Rows[i][2].ToString()}', product_thermal_conduct_class = '{dt.Rows[i][3]}',
+                            product_frost_resist_class = '{dt.Rows[i][4].ToString()}', product_unit_measure = '{dt.Rows[i][5].ToString()}', product_price = {int.Parse(dt.Rows[i][6].ToString())}, product_strength = '{dt.Rows[i][7].ToString()}', product_cubic_to_block = {int.Parse(dt.Rows[i][8].ToString())} 
+                                WHERE product_id = {int.Parse(dt.Rows[i][0].ToString())};";
+                Debug.WriteLine($"edited- {queryAdd}");
+                sendQuery(queryAdd);
+            }
             MessageBox.Show("Данные успешно сохранены!", "Изменение данных в справочнике", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }

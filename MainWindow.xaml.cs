@@ -336,7 +336,7 @@ namespace asu
         
         //}
 
-        static void DebugData(DataTable dat)
+        public static void DebugData(DataTable dat)
         {
 
             foreach (DataRow item in dat.Rows)

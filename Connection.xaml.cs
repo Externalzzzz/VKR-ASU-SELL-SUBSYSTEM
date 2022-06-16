@@ -7,7 +7,7 @@ using System.Configuration;
 namespace asu
 {
     /// <summary>
-    /// Логика взаимодействия для Connection.xaml
+    /// Публичный класс подключения к базе данных
     /// </summary>
     /// 
     public static class Connecting
