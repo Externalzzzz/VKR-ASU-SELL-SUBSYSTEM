@@ -1,22 +1,4 @@
-﻿# ACS (automated control system) for industrial organizations subsystem selling of finished goods
-
-## What is ACS 
-
-ACS is a system that provides problem solving tools for organizations which want to increase their effiency in selling their products.
-## Quickstart 
-
-Just open ASU.exe file, read the documentation and start using it.
-Example files of companys' database are included as .sql files.
-
-## Key features 
-
-* Work fast with your catalogs and edit data in our app.
-* Full support of PostgreSQL.
-* Editable connection to your Database.
-* Solve your management tasks easily and faster.
-* Auto word convertion for result documents.
-
-For the full documentation, please text the [dev](https://t.me/elecitzz).
+﻿# Проектное решение по автоматизации комплекса задач подсистемы управления сбытом готовой продукции
 
 ##  Что такое АСУ подсистемы сбыта готовой продукции
 
@@ -39,3 +21,22 @@ For the full documentation, please text the [dev](https://t.me/elecitzz).
 
 
 По оставшимя вопросам вы можете связаться с [разработчиком](https://t.me/elecitzz).
+# ACS (automated control system) for industrial organizations subsystem selling of finished goods
+
+## What is ACS 
+
+ACS is a system that provides problem solving tools for organizations which want to increase their effiency in selling their products.
+## Quickstart 
+
+Just open ASU.exe file, read the documentation and start using it.
+Example files of companys' database are included as .sql files.
+
+## Key features 
+
+* Work fast with your catalogs and edit data in our app.
+* Full support of PostgreSQL.
+* Editable connection to your Database.
+* Solve your management tasks easily and faster.
+* Auto word convertion for result documents.
+
+For the full documentation, please text the [dev](https://t.me/elecitzz).
