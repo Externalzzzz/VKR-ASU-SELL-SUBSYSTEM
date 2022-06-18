@@ -2,10 +2,10 @@
 
 ## What is ACS 
 
-ACS is a system that provids problem solving tools for organizations which want to increase their effiency in selling theit products.
+ACS is a system that provides problem solving tools for organizations which want to increase their effiency in selling their products.
 ## Quickstart 
 
-Just open ASU.exe file, read the documentation and start integrating your system.
+Just open ASU.exe file, read the documentation and start using it.
 Example files of companys' database are included as .sql files.
 
 ## Key features 
@@ -26,7 +26,7 @@ For the full documentation, please text the [dev](https://t.me/elecitzz).
 ## Начало работы
 
 Запустите приложение ASU.exe, ознакомьтесь с документацией и настройками развертывания базы данных, если она еще не установлена и можете приступать к работе.
-Файлы примеров заполнения данными находятся также в этом репозитории в формате .sql
+Файлы примеров заполнения данными находятся также в этом репозитории в формате .sql файлов
 
 ## Ключевые возможности
 
