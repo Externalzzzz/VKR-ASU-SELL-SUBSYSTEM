@@ -13,6 +13,7 @@
 ## Ключевые возможности
 
 
+* Решение задач по формированию реестров договоров, анкет покупателей, списков категорий товаров и списка клиентов, отказавшихся заключать договор;
 * Корректируйте данные о справочниках и используйте их при решении задач.
 * Полная поддержка базы данных PostgreSQL.
 * Гибкая настройка подключения к базе посредством изменения файла конфигурации приложения.
@@ -33,6 +34,7 @@ Example files of companys' database are included as .sql files.
 
 ## Key features 
 
+* Solve such tasks as creating the register of contracts, buyer's profile, list of product categories etc.
 * Work fast with your catalogs and edit data in our app.
 * Full support of PostgreSQL.
 * Editable connection to your Database.
