@@ -20,6 +20,7 @@ namespace asu
         {
             this.DataContext = this;
             InitializeComponent();
+            Calendar_start.SelectedDate = new DateTime(01,01,2021);
         }
         public MainWindow(string authdata)
         {
@@ -53,21 +54,20 @@ namespace asu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int MonthsCount = 0, NeedAssort = 0;
+            int MonthsCount = 0;
             try
             {
                 MonthsCount = int.Parse(MonthsBox.Text);
-                NeedAssort = int.Parse(AssortCount.Text);
 
             }
             catch
             {
-                MessageBox.Show("Пожалуйста, введите корректные целочисленные значения для ограничений", "Ошибка ограничений", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Пожалуйста, введите корректные целочисленные значения для ограничений.", "Ошибка ограничений", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             DataTable dataTable = ((DataView)DATAgrid.ItemsSource).ToTable();
-            const int staticCols = 4; //ID - name - price - measure
+            const int staticCols = 5; //ID -  CODE - name - price - measure
             int sumRow = 0;
             while(dataTable.Columns.Count != staticCols + MonthsCount)
             {
@@ -94,7 +94,10 @@ namespace asu
                 dataTable.Rows[i][staticCols+MonthsCount+1] = ((float)sumns[i] / (float)fullSumOfProducts ) * 100;
                 Debug.WriteLine(((float)sumns[i] / (float)fullSumOfProducts) * 100);
             }
-            dataTable.Columns.Add(new DataColumn("Кумулятивная доля", typeof(int)));
+            DataView dv1 = new DataView(dataTable);
+            dv1.Sort = "Доля(%) DESC";
+            dataTable = dv1.ToTable();
+            dataTable.Columns.Add(new DataColumn("Кумулятивная доля (%)", typeof(int)));
             for (int i = 0; i < dataTable.Rows.Count; i++)
             {
                 if (i == 0)
@@ -108,7 +111,7 @@ namespace asu
             {
                 int tempRes = (int)dataTable.Rows[i][staticCols + MonthsCount + 2];
                 char abcChar = ' ';
-                if (tempRes < 85)
+                if (tempRes < 80)
                     abcChar = 'A';
                 else if (tempRes < 95)
                     abcChar = 'B';
@@ -121,7 +124,7 @@ namespace asu
             {
                 List <int> price = new List<int>();
                 for (int j = staticCols; j < staticCols + MonthsCount; j++)
-                    price.Add((int)dataTable.Rows[i][j] * (int)dataTable.Rows[i][2]);
+                    price.Add((int)dataTable.Rows[i][j] * (int)dataTable.Rows[i][3]);
                 pricevalues.Add(price);
             }
             List<int> sumPrice = new List<int>();
@@ -151,7 +154,7 @@ namespace asu
                 double Diff = (squareDiff / averagePrice) * 100;
                 DIFF_Result.Add(Diff);
             }
-            dataTable.Columns.Add(new DataColumn("Коэффициент вариации",typeof(double)));
+            dataTable.Columns.Add(new DataColumn("Коэффициент вариации (%)",typeof(double)));
             for (int i = 0; i < dataTable.Rows.Count; i++)
             {
                 dataTable.Rows[i][dataTable.Columns.Count-1] = Math.Round(DIFF_Result[i],2);
@@ -172,16 +175,14 @@ namespace asu
                 dataTable.Rows[i][dataTable.Columns.Count - 1] = (string)dataTable.Rows[i][dataTable.Columns.Count - 4] + (string)dataTable.Rows[i][dataTable.Columns.Count - 2];
             }
             dataTable.Columns.Add(new DataColumn("Результат отбора", typeof(string)));
-            DataView dv1 = new DataView(dataTable);
+            dv1 = new DataView(dataTable);
             dv1.Sort = "Доля(%) DESC, Коэффициент вариации ASC ";
             dataTable = dv1.ToTable();
-            int iter = 0;
             for (int i = dataTable.Rows.Count - 1; i >= 0; i--)
             {
-                if (dataTable.Rows.Count - NeedAssort - iter != 0)
+                if (dataTable.Rows[i][dataTable.Columns.Count-2].ToString() == "CZ")
                 {
                     dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано снять с продажи";
-                    iter++;
                 }
                 else
                     dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано оставить в продаже";
@@ -193,7 +194,7 @@ namespace asu
             var helper = new WordSolver("result.docx");
             var items = new Dictionary<string, string>()
             {
-                {"<DATE>", System.DateTime.Now.ToString("dd/MM/yyyy") }
+                {"<DATE>", "01.06.2022" }
                 //{"<ID>", dataTable.Rows[0][0].ToString()},
                 //{"<NAME>", dataTable.Rows[0][1].ToString()},
                 //{"<ABC>", dataTable.Rows[0][dataTable.Columns.Count-5].ToString()},
@@ -203,8 +204,8 @@ namespace asu
             };
             for (int i = 0; i < dataTable.Rows.Count; i++)
             {
-                items["<ID" + (i+1).ToString() + ">"] = (i + 1).ToString();
-                items["<NAME" + (i + 1).ToString() + ">"] = dataTable.Rows[i][1].ToString();
+                items["<ID" + (i+1).ToString() + ">"] = dataTable.Rows[i][1].ToString();
+                items["<NAME" + (i + 1).ToString() + ">"] = dataTable.Rows[i][2].ToString();
                 items["<ABC" + (i + 1).ToString() + ">"] = dataTable.Rows[i][dataTable.Columns.Count - 5].ToString();
                 items["<XYZ" + (i + 1).ToString() + ">"] = dataTable.Rows[i][dataTable.Columns.Count - 3].ToString();
                 items["<ABCXYZ" + (i + 1).ToString() + ">"] = dataTable.Rows[i][dataTable.Columns.Count - 2].ToString();
@@ -221,10 +222,10 @@ namespace asu
                     var helper1 = new WordSolver("delProd.docx");
                     var items2 = new Dictionary<string, string>()
                     {
-                        {"<DATE>", System.DateTime.Now.ToString("dd/MM/yyyy") },
-
-                        {"<NAME>", dataTable.Rows[i][1].ToString()},
-                        {"<COST>", dataTable.Rows[i][2].ToString()}
+                        {"<DATE>", "01.06.2022" },
+                        {"<ID>", dataTable.Rows[i][1].ToString() },
+                        {"<NAME>", dataTable.Rows[i][2].ToString()},
+                        {"<COST>", dataTable.Rows[i][3].ToString()}
 
                     };
                     var dir1 = helper1.Process(items2);
@@ -479,6 +480,11 @@ namespace asu
             dataCol1.ColumnName = "№";
             dataCol1.DataType = typeof(string);
             dt.Columns.Add(dataCol1);
+            dataCol1 = new DataColumn("Код категории", typeof(string));
+            dataCol1.ColumnName = "Код категории";
+            dataCol1.DataType = typeof(string);
+            dt.Columns.Add(dataCol1);
+
             dataCol1 = new DataColumn("Продукция", typeof(string));
             dataCol1.ColumnName = "Продукция";
             dataCol1.DataType = typeof(string);
@@ -569,28 +575,29 @@ namespace asu
             //    //}
 
             //}
-            string newMonth = CorrectStringToQueryDate(dt.Columns[4].ColumnName);
+            string newMonth = CorrectStringToQueryDate(dt.Columns[5].ColumnName);
             string lastMonth = CorrectStringToQueryDate(dt.Columns[dt.Columns.Count-1].ColumnName);
 
-            string query = $@"select  b.product_name, b.product_price,  b.product_unit_measure
+            string query = $@"select  b.product_id, b.product_name, b.product_price,  b.product_unit_measure
                                     FROM dbschema.connection_contract_product as a,
                                     dbschema.products as b,
                             		dbschema.contract_of_purchase_sale as c
                                     WHERE a.product_id = b.product_id and c.contract_id = a.contract_id and c.contract_sign_date between date('{newMonth}') and date('{newMonth}') +interval'1 month' - interval '1 day'
                                     ORDER BY a.contract_id ASC, a.product_id ASC; ";
 
-            List<string> PRODUCTS = SendQuery(query).Select(x => x[0]).ToList();
+            List<string> PRODUCTS = SendQuery(query).Select(x => x[1]).ToList();
+            List<string> CODES= SendQuery(query).Select(x => x[0]).ToList();
             if (PRODUCTS.Count == 0)
             {
                 MessageBox.Show("В начальном месяце не было продаж, пожалуйста, выберите корректную дату", "Ошибка начальной даты", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }  
 
-            List<string> COST = SendQuery(query).Select(x => x[1]).ToList();
-            List<string> MEASUREMENT = SendQuery(query).Select(x => x[2]).ToList();
+            List<string> COST = SendQuery(query).Select(x => x[2]).ToList();
+            List<string> MEASUREMENT = SendQuery(query).Select(x => x[3]).ToList();
             for (int i = 0; i < PRODUCTS.Count; i++)
             {
-                List<string> rowList = new List<string> { (i+1).ToString(), PRODUCTS[i], COST[i], MEASUREMENT[i] };
+                List<string> rowList = new List<string> { (i+1).ToString(),CODES[i], PRODUCTS[i], COST[i], MEASUREMENT[i] };
                 string query2 = $@"select  b.product_name, sum(a.product_sell_amount), sum(a.product_res_cost)
                                 FROM dbschema.connection_contract_product as a,
                                         dbschema.products as b,
@@ -604,7 +611,7 @@ namespace asu
                 DataRow dr = dt.NewRow();
                 for (int j = 0; j < rowList.Count; j++)
                 {
-                    if (j != 1 && j != 3)
+                    if (j >4)
                         dr[j] = int.Parse(rowList[j]);
                     else 
                         dr[j] = rowList[j];
