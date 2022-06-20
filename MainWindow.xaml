@@ -182,6 +182,13 @@
                     <TextBlock TextWrapping="Wrap" Grid.Row="1"  FontSize="14" VerticalAlignment="Center" Height="50" TextAlignment="Center" LineHeight="7" TextTrimming="WordEllipsis" LineStackingStrategy="MaxHeight"><Run Text="Введите "/><LineBreak/><Run Text="данные:"/></TextBlock>
                     <Button Grid.Column="1" Content="Загрузить" HorizontalAlignment="Center" FontSize="14" VerticalAlignment="Center" Height="50" Width="270" Click="Button_Click_1"/>
                     <DataGrid x:Name="DATAgrid"  Grid.Column="2" FontSize="14"  Grid.Row="0" Grid.RowSpan="4"   Margin="0,6,5,0">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Добавить строку" Click="MenuItem_Click_3" />
+                                <MenuItem Header="Удалить строку" Click="MenuItem_Click_1" />
+                                <MenuItem Header="Обновить данные" Click="MenuItem_Click_2" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
 
                     </DataGrid>
                     <GroupBox Grid.Column="1" Header="Ограничения" Grid.Row="1" FontSize="14" Margin="0,0,0,2">
@@ -206,7 +213,7 @@
                         </Grid>
                     </GroupBox>
                     <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Text="Загрузка входных данных:" Height="50" Width="144" TextAlignment="Center" FontSize="14" LineHeight="7" TextTrimming="WordEllipsis" LineStackingStrategy="MaxHeight"/>
-                    <Button x:Name="Solve" Grid.Row="2" Grid.ColumnSpan="2" Content="Провести анализ" FontSize="14" FontWeight="Heavy" Margin="0,3,5,0" Click="Button_Click" IsEnabled="False"/>
+                    <Button x:Name="Solve" Grid.Row="2" Grid.ColumnSpan="2" Content="Сформировать документ" FontSize="14" FontWeight="Heavy" Margin="0,3,5,0" Click="Button_Click" IsEnabled="False"/>
 
                 </Grid>
             </TabItem>

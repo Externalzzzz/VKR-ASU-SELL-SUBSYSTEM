@@ -97,7 +97,7 @@ namespace asu
             DataView dv1 = new DataView(dataTable);
             dv1.Sort = "Доля(%) DESC";
             dataTable = dv1.ToTable();
-            dataTable.Columns.Add(new DataColumn("Кумулятивная доля (%)", typeof(int)));
+            dataTable.Columns.Add(new DataColumn("Накапливаемая доля (%)", typeof(int)));
             for (int i = 0; i < dataTable.Rows.Count; i++)
             {
                 if (i == 0)
@@ -176,16 +176,16 @@ namespace asu
             }
             dataTable.Columns.Add(new DataColumn("Результат отбора", typeof(string)));
             dv1 = new DataView(dataTable);
-            dv1.Sort = "Доля(%) DESC, Коэффициент вариации ASC ";
+            dv1.Sort = "Доля(%) DESC, Коэффициент вариации (%) ASC ";
             dataTable = dv1.ToTable();
             for (int i = dataTable.Rows.Count - 1; i >= 0; i--)
             {
                 if (dataTable.Rows[i][dataTable.Columns.Count-2].ToString() == "CZ")
                 {
-                    dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано снять с продажи";
+                    dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано снизить объемы производства";
                 }
                 else
-                    dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано оставить в продаже";
+                    dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано оставить в таком же объеме";
 
 
             }
@@ -210,6 +210,7 @@ namespace asu
                 items["<XYZ" + (i + 1).ToString() + ">"] = dataTable.Rows[i][dataTable.Columns.Count - 3].ToString();
                 items["<ABCXYZ" + (i + 1).ToString() + ">"] = dataTable.Rows[i][dataTable.Columns.Count - 2].ToString();
                 items["<RESULT" + (i + 1).ToString() + ">"] = dataTable.Rows[i][dataTable.Columns.Count - 1].ToString();
+                items["<PERIOD>"] = dataTable.Columns[5].ToString() + "г.  -  31" + dataTable.Columns[5+MonthsCount-1].ToString().Substring(2) + "г.";
 
             }
             string dir = helper.Process(items);
@@ -217,7 +218,7 @@ namespace asu
             res.Show();
             for (int i = 0; i < dataTable.Rows.Count; i++)
             {
-                if (dataTable.Rows[i][dataTable.Columns.Count - 1].ToString() == "Рекомендовано снять с продажи")
+                if (dataTable.Rows[i][dataTable.Columns.Count - 1].ToString() == "Рекомендовано снизить объемы производства")
                 {
                     var helper1 = new WordSolver("delProd.docx");
                     var items2 = new Dictionary<string, string>()
@@ -225,7 +226,8 @@ namespace asu
                         {"<DATE>", "01.06.2022" },
                         {"<ID>", dataTable.Rows[i][1].ToString() },
                         {"<NAME>", dataTable.Rows[i][2].ToString()},
-                        {"<COST>", dataTable.Rows[i][3].ToString()}
+                        {"<COST>", dataTable.Rows[i][3].ToString()},
+                        {"<PERIOD>", dataTable.Columns[5].ToString() + "г.  -  31" + dataTable.Columns[5+MonthsCount-1].ToString().Substring(2) + "г." }
 
                     };
                     var dir1 = helper1.Process(items2);
@@ -636,6 +638,113 @@ namespace asu
                 return;
             }
             Solve.IsEnabled = true;
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (DATAgrid.SelectedIndex >= 0)
+
+            {
+                DataRow product = null;
+                //remove the selectedItem from the collection source
+                try
+                {
+                    product = ((DataRowView)DATAgrid.SelectedItem).Row;
+                }
+                catch { MessageBox.Show("Ошибка удаления, пустую строку невозможно удалить!"); return; }
+
+                DataTable dt2 = ((DataView)(DATAgrid.ItemsSource)).ToTable();
+                DebugData(dt2);
+                foreach (DataRow row in dt2.Rows)
+                {
+                    Debug.WriteLine(row.ItemArray.ToString());
+                    Debug.WriteLine("Выбранная строка");
+                    for (int i = 0; i < product.ItemArray.Length; i++)
+                        Debug.Write(product.ItemArray[i] + " ");
+                    Debug.Write("\n");
+                    
+                    if (row.ItemArray[0] == product.ItemArray[0])
+                    {
+                        row.Delete();
+                        break;
+                    }
+
+                }
+                dt2.AcceptChanges();
+                DATAgrid.ItemsSource = new DataView(dt2);
+            }
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            Button_Click_1(sender, e);
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            if (DATAgrid.ItemsSource == null)
+            {
+                DataTable freedt = new DataTable();
+                DataColumn dataCol1 = new DataColumn("№", typeof(int));
+                dataCol1.ColumnName = "№";
+                dataCol1.DataType = typeof(string);
+                freedt.Columns.Add(dataCol1);
+                dataCol1 = new DataColumn("Код категории", typeof(string));
+                dataCol1.ColumnName = "Код категории";
+                dataCol1.DataType = typeof(string);
+                freedt.Columns.Add(dataCol1);
+
+                dataCol1 = new DataColumn("Продукция", typeof(string));
+                dataCol1.ColumnName = "Продукция";
+                dataCol1.DataType = typeof(string);
+                freedt.Columns.Add(dataCol1);
+                freedt.Columns.Add(new DataColumn("Стоимость", typeof(int)));
+                freedt.Columns.Add(new DataColumn("Единица измерения", typeof(string)));
+                List<string> columns = new List<string> { "№", "Продукция" };
+                int monthCount;
+                try
+                {
+                    monthCount = int.Parse(MonthsBox.Text);
+                    if (monthCount <= 0)
+                    {
+                        MessageBox.Show("Пожалуйста, введите целочисленное значение для количества месяцев.\nНапример, 12.",
+                        "Ошибка ввода диапазона", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Пожалуйста, введите целочисленное значение для количества месяцев.\nНапример, 12.",
+                        "Ошибка ввода диапазона", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                string startMonth = "";
+                try
+                {
+                    Debug.WriteLine(Calendar_start.SelectedDate.Value);
+                    startMonth = Calendar_start.SelectedDate.Value.ToString("dd/MM/yyyy");
+
+                }
+                catch
+                { MessageBox.Show("Пожалуйста, введите начальную дату и количество месяцев!", "Ошибка запроса данных", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+
+                for (int i = 0; i < monthCount; i++)
+                {
+                    int tempMonth = int.Parse(startMonth.Substring(3, 2)) + i;
+                    int year = int.Parse(startMonth.Substring(6, 4)) + ValidateMonth(tempMonth.ToString());
+                    string ResDate = startMonth.Substring(0, 2) + "-";
+                    ResDate += CorrectStringMonth(tempMonth) + "-";
+                    ResDate += year.ToString();
+                    DataColumn dataCol = new DataColumn(ResDate, typeof(string));
+                    dataCol.ColumnName = ResDate;
+                    dataCol.DataType = typeof(int);
+                    freedt.Columns.Add(dataCol);
+
+                }
+                DATAgrid.ItemsSource = new DataView(freedt);
+            }
+
+            return;
         }
     }
 }
