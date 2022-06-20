@@ -180,7 +180,7 @@ namespace asu
             dataTable = dv1.ToTable();
             for (int i = dataTable.Rows.Count - 1; i >= 0; i--)
             {
-                if (dataTable.Rows[i][dataTable.Columns.Count-2].ToString() == "CZ")
+                if (dataTable.Rows[i][dataTable.Columns.Count-2].ToString() == "CZ"|| dataTable.Rows[i][dataTable.Columns.Count - 2].ToString() == "BZ" || dataTable.Rows[i][dataTable.Columns.Count - 2].ToString() == "CY")
                 {
                     dataTable.Rows[i][dataTable.Columns.Count - 1] = "Рекомендовано снизить объемы производства";
                 }
